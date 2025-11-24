@@ -1,16 +1,19 @@
-name: Build Launcher APK
+name: Build APK
 on: [push]
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      # हम यहाँ "ArtemSBulgakov" की जगह "Official Kivy Action" यूज़ करेंगे
       - name: Build with Buildozer
-        uses: ArtemSBulgakov/buildozer-action@v1
-        id: buildozer
+        uses: kivy/buildozer-action@v1.3.0
         with:
-          workdir: .
-          buildozer_version: master
+          repository_root: .
+          buildozer_version: stable
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
