@@ -2,13 +2,12 @@ name: Build Launcher APK
 on: [push]
 jobs:
   build:
-    # हम Ubuntu 20.04 यूज़ करेंगे जो Kivy के लिए सबसे बेस्ट है
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. जगह खाली करें (ताकि Space कम न पड़े)
+      # 1. डिस्क स्पेस खाली करना (ताकि जगह कम न पड़े)
       - name: Free Disk Space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -16,27 +15,27 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-      # 2. जरूरी टूल्स डालें (Java 17 + Python Dependencies)
-      - name: Install Dependencies
+      # 2. ब्रह्मास्त्र फिक्स (Java 17 + Python Tools)
+      - name: Install System Dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y openjdk-17-jdk python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf autotools-dev unzip
 
-      # 3. Buildozer डालें
+      # 3. Buildozer इंस्टॉल करना
       - name: Install Buildozer
         run: |
           pip3 install --upgrade pip
           pip3 install buildozer cython==0.29.33
 
-      # 4. APK बनाना शुरू करें
+      # 4. APK बनाना
       - name: Build APK
         run: |
           yes | buildozer android debug
 
-      # 5. APK अपलोड करें
+      # 5. APK अपलोड करना
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: neo-launcher-apk
+          name: Brahmastra-Launcher-APK
           path: bin/*.apk
           
