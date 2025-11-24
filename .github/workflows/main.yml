@@ -7,19 +7,19 @@ jobs:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. जरूरी चीजें इंस्टॉल करें (Install Dependencies)
+      # 1. Java 17 और जरूरी टूल्स डालें (यही सबसे जरूरी फिक्स है)
       - name: Install System Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf autotools-dev
+          sudo apt-get install -y openjdk-17-jdk python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf autotools-dev
 
-      # 2. Buildozer टूल डालें
+      # 2. Buildozer डालें
       - name: Install Buildozer
         run: |
           pip3 install --upgrade pip
           pip3 install buildozer cython==0.29.33
 
-      # 3. APK बनाना शुरू करें
+      # 3. APK बनाना शुरू करें (Verbose Mode के साथ, ताकि अगर एरर आए तो पता चले)
       - name: Build APK
         run: |
           yes | buildozer android debug
