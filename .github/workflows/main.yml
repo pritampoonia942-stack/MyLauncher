@@ -2,8 +2,8 @@ name: Build Launcher APK
 on: [push]
 jobs:
   build:
-    # यही सबसे जरूरी लाइन है: हम पुराना कंप्यूटर मांग रहे हैं
-    runs-on: ubuntu-20.04
+    # 1. हम नया और तेज कंप्यूटर ले रहे हैं (ताकि लाइन में न लगना पड़े)
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -15,7 +15,13 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-      # Java 11 (जो API 31 के लिए जरूरी है)
+      # 2. यह है वो "जादुई फिक्स" (SSL Fix) जो पिछली बार के एरर को हटा देगा
+      - name: Fix OpenSSL for Android
+        run: |
+          wget http://nz2.archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+          sudo dpkg -i libssl1.1_1.1.1f-1ubuntu2_amd64.deb
+
+      # 3. बाकी सेटिंग्स वही पुरानी और भरोसेमंद (Java 11)
       - name: Install System Dependencies
         run: |
           sudo apt-get update
@@ -33,6 +39,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: NeoLauncher-Final
+          name: NeoLauncher-SuperFast
           path: bin/*.apk
           
