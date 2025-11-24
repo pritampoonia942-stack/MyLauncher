@@ -2,7 +2,8 @@ name: Build Launcher APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    # यही सबसे जरूरी लाइन है: हम पुराना कंप्यूटर मांग रहे हैं
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
@@ -14,7 +15,7 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-      # यहाँ बदलाव है: Java 17 की जगह Java 11 (जो API 31 के लिए सही है)
+      # Java 11 (जो API 31 के लिए जरूरी है)
       - name: Install System Dependencies
         run: |
           sudo apt-get update
@@ -32,6 +33,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: NeoLauncher-Golden
+          name: NeoLauncher-Final
           path: bin/*.apk
           
