@@ -2,12 +2,12 @@ name: Build Launcher APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    # हम पुराने कंप्यूटर पर वापस जा रहे हैं जो 100% काम करता है
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. डिस्क स्पेस खाली करना (ताकि जगह कम न पड़े)
       - name: Free Disk Space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -15,27 +15,24 @@ jobs:
           sudo rm -rf "/usr/local/share/boost"
           sudo rm -rf "$AGENT_TOOLSDIRECTORY"
 
-      # 2. ब्रह्मास्त्र फिक्स (Java 17 + Python Tools)
-      - name: Install System Dependencies
+      # Java 11 (API 31 के लिए बेस्ट है)
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf autotools-dev unzip
+          sudo apt-get install -y openjdk-11-jdk python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf autotools-dev unzip
 
-      # 3. Buildozer इंस्टॉल करना
       - name: Install Buildozer
         run: |
           pip3 install --upgrade pip
           pip3 install buildozer cython==0.29.33
 
-      # 4. APK बनाना
       - name: Build APK
         run: |
           yes | buildozer android debug
 
-      # 5. APK अपलोड करना
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Brahmastra-Launcher-APK
+          name: NeoLauncher-APK
           path: bin/*.apk
           
