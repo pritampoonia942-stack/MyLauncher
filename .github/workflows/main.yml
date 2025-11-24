@@ -1,19 +1,30 @@
-name: Build APK
+name: Build Launcher APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # हम यहाँ "ArtemSBulgakov" की जगह "Official Kivy Action" यूज़ करेंगे
-      - name: Build with Buildozer
-        uses: kivy/buildozer-action@v1.3.0
-        with:
-          repository_root: .
-          buildozer_version: stable
+      # 1. जरूरी चीजें इंस्टॉल करें (Install Dependencies)
+      - name: Install System Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf autotools-dev
 
+      # 2. Buildozer टूल डालें
+      - name: Install Buildozer
+        run: |
+          pip3 install --upgrade pip
+          pip3 install buildozer cython==0.29.33
+
+      # 3. APK बनाना शुरू करें
+      - name: Build APK
+        run: |
+          yes | buildozer android debug
+
+      # 4. फाइल अपलोड करें
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
