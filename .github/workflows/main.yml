@@ -2,32 +2,41 @@ name: Build Launcher APK
 on: [push]
 jobs:
   build:
-    runs-on: ubuntu-22.04
+    # हम Ubuntu 20.04 यूज़ करेंगे जो Kivy के लिए सबसे बेस्ट है
+    runs-on: ubuntu-20.04
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
 
-      # 1. Java 17 और जरूरी टूल्स डालें (यही सबसे जरूरी फिक्स है)
-      - name: Install System Dependencies
+      # 1. जगह खाली करें (ताकि Space कम न पड़े)
+      - name: Free Disk Space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /opt/ghc
+          sudo rm -rf "/usr/local/share/boost"
+          sudo rm -rf "$AGENT_TOOLSDIRECTORY"
+
+      # 2. जरूरी टूल्स डालें (Java 17 + Python Dependencies)
+      - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y openjdk-17-jdk python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf autotools-dev
+          sudo apt-get install -y openjdk-17-jdk python3-pip build-essential git python3 python3-dev ffmpeg libsdl2-dev libsdl2-image-dev libsdl2-mixer-dev libsdl2-ttf-dev libportmidi-dev libswscale-dev libavformat-dev libavcodec-dev zlib1g-dev libltdl-dev libffi-dev libssl-dev autoconf autotools-dev unzip
 
-      # 2. Buildozer डालें
+      # 3. Buildozer डालें
       - name: Install Buildozer
         run: |
           pip3 install --upgrade pip
           pip3 install buildozer cython==0.29.33
 
-      # 3. APK बनाना शुरू करें (Verbose Mode के साथ, ताकि अगर एरर आए तो पता चले)
+      # 4. APK बनाना शुरू करें
       - name: Build APK
         run: |
           yes | buildozer android debug
 
-      # 4. फाइल अपलोड करें
+      # 5. APK अपलोड करें
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: launcher-apk
+          name: neo-launcher-apk
           path: bin/*.apk
           
